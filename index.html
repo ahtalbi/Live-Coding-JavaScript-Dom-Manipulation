@@ -26,10 +26,7 @@
 
             <div id="panier-items" class="flex flex-col items-center gap-3">
                 <p id="panier-empty" class="hidden text-gray-500">Votre panier est vide.</p>
-                <div id="item" class="w-full flex justify-between items-center h-9">
-                    <h1>Web</h1>
-                    <h3>400 MAD</h3>
-                </div>
+                
             </div>
 
             <div class="border-t mt-4 pt-4 flex justify-between font-bold">
@@ -39,17 +36,22 @@
         </div>
     </div>
     <script>
+        const panierItems = document.getElementById("panier-items");
+        const panierTotal = document.getElementById("panier-total");
+
         let cours = [
             { id: 1, titre: "HTML & CSS", categorie: "Web", duree: "20h", prix: 300 },
-            { id: 2, titre: "JavaScript", categorie: "Web", duree: "30h", prix: 450 },
+            { id: 2, titre: "<i>JavaScript</i>", categorie: "Web", duree: "30h", prix: 450 },
             { id: 3, titre: "Python", categorie: "Data", duree: "25h", prix: 400 },
             { id: 4, titre: "SQL", categorie: "Data", duree: "15h", prix: 250 },
             { id: 5, titre: "Figma", categorie: "Design", duree: "10h", prix: 200 },
             { id: 6, titre: "UI/UX", categorie: "Design", duree: "18h", prix: 350 }
         ];
 
-        let panier = [];
+        let totalPrix = 0;
 
+        let panierObj = {};
+        
         function afficher() {
             let texte = document.getElementById("recherche").value.toLowerCase();
             let categorie = document.getElementById("categorie").value;
@@ -69,9 +71,28 @@
                     <p>${c.categorie}</p>
                     <p>${c.duree}</p>
                     <p class="text-blue-600 font-bold">${c.prix} DH</p>
-                    <button id="btn-item" value="${c.id}" class="bg-blue-600 text-white px-4 py-2 rounded mt-2"> S'inscrire </button>
+                    <button id="btn-item-${c.id}" value="${c.id}" class="bg-blue-600 text-white px-4 py-2 rounded mt-2"> S'inscrire </button>
                 </div>`;
             }
+
+            for (let i = 1; i <= cours.length; i++) {
+                let btn = document.getElementById(`btn-item-${i}`);
+                btn.addEventListener("click", ()=> {
+                    let id = btn.value;
+                    if (panierObj[id]) return;
+                    let cour = cours[id-1];
+                    totalPrix += cour.prix;
+                    panierItems.innerHTML += `
+                    <div id="item" class="w-full flex justify-between items-center h-9">
+                        <h1>${cour.titre}</h1>
+                        <h3>${cour.prix} MAD</h3>
+                    </div>
+                    `;
+                    panierTotal.innerText = totalPrix + " DH";
+                    panierObj[id] = true;
+                })
+            }
+            
         }
 
         function inscrire(titre) {
